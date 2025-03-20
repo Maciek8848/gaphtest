@@ -201,10 +201,15 @@ void print_output(){
         perror("BŁAD! Nie mozna otworzyc pliku output.txt");
     } else {
         char line[256];
-        while (fgets(line, sizeof(line), file) != NULL) {
-            printf("%s", line);
-        }
+        int line_count = 0;
         
+        while (fgets(line, sizeof(line), file) != NULL && line_count < 13) {
+            printf("%s", line);
+            line_count++;
+        }
+        if(line_count >= 13){
+            printf("...\n");
+        }
     }
     fclose(file);
 }
@@ -218,9 +223,10 @@ int main(void) {
     // Generowanie losowej liczby od 2 do 10
     do{
         i++;
-        liczba = rand() % 9 + 2;
+        liczba = rand() % 10 + 2;
         test(liczba);
         printf("\nTEST nr.%d\n", i);
+        printf("liczba wierzchołków: %d\n", liczba  );
         bledy = komunikaty(liczba);
         if (bledy != 0){
             printf("----------------------------\n");
