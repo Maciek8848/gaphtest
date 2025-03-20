@@ -224,7 +224,7 @@ void print_output(){
             line_count++;
         }
         if(line_count >= 13){
-            printf("...\n");
+            printf("\n...\n");
         }
     }
     fclose(file);
@@ -233,7 +233,7 @@ int main(void) {
     int ilosc_test, liczba, bledy;
     int i=0;
     int total_failed_tests = 0;
-    printf("Enter the number of tests: ");
+    printf("Podaj ilość testów do przeprowadzenia: ");
     scanf("%d", &ilosc_test);
     srand(time(NULL));
     // Generowanie losowej liczby od 2 do 10
@@ -254,8 +254,9 @@ int main(void) {
     }   while (i < ilosc_test);
     
 
-
-    printf("Total failed tests: %d\n", total_failed_tests);
-    printf("Total passed tests: %d\n", 3 * i - total_failed_tests);
+    printf("------------------------------------------\n");
+    printf("Razem nie udanych testów: %d\n", total_failed_tests);
+    printf("Razem udanych testów: %d\n", 3 * i - total_failed_tests);
+    printf("------------------------------------------\n");
     return 0;
 }
