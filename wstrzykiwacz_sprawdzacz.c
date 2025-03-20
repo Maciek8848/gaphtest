@@ -7,35 +7,42 @@
 #include <string.h>
 #include <stdbool.h>
 #include <time.h>
+#include <ctype.h>
 
 
 int policz_wierzcholki() {
     FILE *file = fopen("output.txt", "r");
     if (file == NULL) {
         perror("Nie mozna otworzyc pliku");
-        return -1; // Zwróć -1 w przypadku błędu
+        return -1;
     }
 
-    char line[256];
+    char line[1024];
     int liczba_wierzcholkow = 0;
+    int zliczaj = 0;
 
-    // Przeszukaj plik linia po linii
     while (fgets(line, sizeof(line), file) != NULL) {
-        // Sprawdź, czy linia zaczyna się od "wierzcholki w grafie:"
         if (strstr(line, "wierzcholki w grafie:") != NULL) {
-            // Zlicz liczbę wystąpień 'W' w tej linii
-            for (int i = 0; line[i] != '\0'; i++) {
-                if (line[i] == 'W') {
+            zliczaj = 1;
+            char *start = strstr(line, "wierzcholki w grafie:") + strlen("wierzcholki w grafie:");
+            char *token = strtok(start, " ");
+            while (token != NULL) {
+                if (token[0] == 'W' && isdigit(token[1])) {
                     liczba_wierzcholkow++;
                 }
+                token = strtok(NULL, " ");
             }
-            break; // Zakończ przeszukiwanie po znalezieniu odpowiedniej linii
+        }
+
+        if (strstr(line, "polaczenia w grafie:") != NULL) {
+            zliczaj = 0;
+            break;
         }
     }
 
     fclose(file);
 
-    return liczba_wierzcholkow; // Zwróć liczbę wierzchołków
+    return liczba_wierzcholkow;
 }
 int sprawdz_polaczenia() {
     FILE *file = fopen("output.txt", "r");
@@ -63,6 +70,7 @@ int sprawdz_polaczenia() {
                     if (sscanf(token, "W%d->W%d", &x, &y) == 2) {
                         // Sprawdź, czy połączenie już istnieje
                         if (polaczenia[x][y]) {
+                            printf("Powtarzająca się krawędź W%d->W%d \n", x,y);
                             powtorzenia = true; // Znaleziono powtórzenie
                         } else {
                             polaczenia[x][y] = true; // Zaznacz połączenie
@@ -178,22 +186,30 @@ int komunikaty(int liczba){
     }
     int komunikat = sprawdz_polaczenia();
     if(komunikat == 0){
-        printf("Brak powtarzania wierzchołków - FAILED\nKrawędzie dwukierunkowe - FAILED\n");
+        printf("Brak powtarzania krawędzi - FAILED\nKrawędzie dwukierunkowe - FAILED\n");
         tests_failed = tests_failed + 2;
     }
     else if(komunikat == 1){
-        printf("Brak powtarzania wierzchołków - FAILED\nKrawędzie dwukierunkowe - PASSED\n");
+        printf("Brak powtarzania krawędzi - FAILED\nKrawędzie dwukierunkowe - PASSED\n");
         tests_failed++;
     }
     else if(komunikat == 2){
-        printf("Brak powtarzania wierzchołków - PASSED\nKrawędzie dwukierunkowe - FAILED\n");
+        printf("Brak powtarzania krawędzi - PASSED\nKrawędzie dwukierunkowe - FAILED\n");
         tests_failed++;
     }
     else{
-        printf("Brak powtarzania wierzchołków - PASSED\nKrawędzie dwukierunkowe - PASSED\n");
+        printf("Brak powtarzania krawędzi - PASSED\nKrawędzie dwukierunkowe - PASSED\n");
     }
     return tests_failed;
     
+}
+int random_number(){
+    int przedzial = rand() % 100;
+    if (przedzial < 75) {
+        return 2 + (rand() % 9); // 2 -10
+    } else {
+        return 10 + (rand() % 91);// 10 - 100
+    }
 }
 void print_output(){
     FILE *file = fopen("output.txt", "r");
@@ -223,10 +239,10 @@ int main(void) {
     // Generowanie losowej liczby od 2 do 10
     do{
         i++;
-        liczba = rand() % 10 + 2;
+        liczba = random_number();
         test(liczba);
         printf("\nTEST nr.%d\n", i);
-        printf("liczba wierzchołków: %d\n", liczba  );
+        printf("liczba wierzchołków: %d\n", liczba);
         bledy = komunikaty(liczba);
         if (bledy != 0){
             printf("----------------------------\n");
