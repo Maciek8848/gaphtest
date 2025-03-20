@@ -1,0 +1,7 @@
+wierzcholki w grafie: W1 W2 W3 W4 W5 
+polaczenia w grafie: 
+W1->W1 W1->W4 W1->W5 
+W2->W1 W2->W2 W2->W3 W2->W4 W2->W5 
+W3->W2 W3->W3 W3->W4 W3->W5 
+W4->W1 W4->W2 W4->W3 W4->W4 
+W5->W1 W5->W2 W5->W3 W5->W4 W5->W5 
